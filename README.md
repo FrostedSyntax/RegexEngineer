@@ -2,7 +2,17 @@
 
 ## Example Usage
 
-> string example =  @"\b[A-Za-z]+(?:['][a-z]+)?\b";
+> string example =  @"[A-Za-z]+(?:['][a-z]+)?";
+> 
+> RegexBuilder rb = RegexBuilder.Create();
+> var frag1 = rb.CreateCharClass("A-Za-z").OneOrMore();
+> var frag2 = rb.CreateCharClass('\'').Group(rb.CreateCharClass("a-z").OneOrMore()).Optional();
+>
+> rb.AddFragments(frag1, frag2);
+>
+> Console.WriteLine(rb.ToString());
+>
+> // [A-Za-z]+(?:['][a-z]+)?
 
 ## License
 
