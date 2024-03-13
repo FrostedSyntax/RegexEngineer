@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace RegexEngineerLib
 {
@@ -49,9 +50,9 @@ namespace RegexEngineerLib
         /// </summary>
         /// <param name="escapeChar">The character portion of the escape pattern.</param>
         /// <returns>The newly created <see cref="RegexFragment"/>.</returns>
-        public RegexFragment CreateCharEscape(char escapeChar)
+        public RegexFragment CreateEscapedChar(EscapedCharacterKind charKind)
         {
-            return new RegexFragment($"\\{escapeChar}")
+            return new RegexFragment($"{GetEscaped(charKind)}")
             {
                 _options = {
                     FragmentKind = RegexFragmentKind.CharacterEscape
@@ -60,48 +61,23 @@ namespace RegexEngineerLib
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="RegexFragment"/> representing the specified negated character class pattern.
+        /// Creates a new instance of <see cref="RegexFragment"/> representing the specified character class pattern.
         /// </summary>
+        /// <param name="negated">A value indicating whether to make a negated character class.</param>
         /// <param name="chars">A string representing the contents of the character class.</param>
         /// <returns>The newly created <see cref="RegexFragment"/>.</returns>
-        public RegexFragment CreateCharClass(string chars)
+        public RegexFragment CreateCharClass(bool negated, params string[] chars)
         {
-            return new RegexFragment(chars)
-            {
-                _options =
-                {
-                    FragmentKind = RegexFragmentKind.CharacterSet
-                }
-            };
-        }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="RegexFragment"/> representing the specified negated character class pattern.
-        /// </summary>
-        /// <param name="chars">A parameterized list of characters.</param>
-        /// <returns>The newly created <see cref="RegexFragment"/>.</returns>
-        public RegexFragment CreateNegatedCharClass(params char[] chars)
-        {
-            List<char> charsList = chars.Distinct().ToList();
+            List<string> charsList = chars.Distinct().ToList();
 
             // Makes sure hyphen is at the end of the list.
-            if (charsList.Contains('-'))
+            if (charsList.Contains("-"))
             {
-                charsList.Remove('-');
-                charsList.Add('-');
+                charsList.Remove("-");
+                charsList.Add("-");
             }
 
-            return CreateNegatedCharClass(charsList.Flatten(c => c.ToString()));
-        }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="RegexFragment"/> representing the specified negated character class pattern.
-        /// </summary>
-        /// <param name="chars">A string representing the contents of the negated character class.</param>
-        /// <returns>The newly created <see cref="RegexFragment"/>.</returns>
-        public RegexFragment CreateNegatedCharClass(string chars)
-        {
-            return new RegexFragment("^" + chars)
+            return new RegexFragment(chars, negated)
             {
                 _options =
                 {
@@ -109,6 +85,20 @@ namespace RegexEngineerLib
                 }
             };
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public MatchCollection GetMatches(string input) => new Regex(Compile()).Matches(input);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public bool Test(string input) => new Regex(Compile()).IsMatch(input);
 
         /// <summary>
         /// Returns the full pattern as a string.
@@ -118,5 +108,47 @@ namespace RegexEngineerLib
 
         // Compiles all fragments into a single string.
         private string Compile() => _fragments.Flatten(f => f.Compile());
+
+        // Returns the escaped character pattern for the specified character kind.
+        internal static string GetEscaped(EscapedCharacterKind charKind)
+        {
+            switch (charKind)
+            {
+                case EscapedCharacterKind.WordBoundary:
+                    return @"\b";
+                case EscapedCharacterKind.Tab:
+                    return @"\t";
+                case EscapedCharacterKind.CarriageReturn:
+                    return @"\r";
+                case EscapedCharacterKind.NewLine:
+                    return @"\n";
+                case EscapedCharacterKind.FormFeed:
+                    return @"\f";
+                case EscapedCharacterKind.VerticalTab:
+                    return @"\v";
+                case EscapedCharacterKind.Null:
+                    return @"\0";
+                case EscapedCharacterKind.Digit:
+                    return @"\d";
+                case EscapedCharacterKind.NonDigit:
+                    return @"\D";
+                case EscapedCharacterKind.Whitespace:
+                    return @"\s";
+                case EscapedCharacterKind.NonWhitespace:
+                    return @"\S";
+                case EscapedCharacterKind.Word:
+                    return @"\w";
+                case EscapedCharacterKind.NonWord:
+                    return @"\W";
+                case EscapedCharacterKind.Bell:
+                    return @"\a";
+                case EscapedCharacterKind.Escape:
+                    return @"\e";
+                case EscapedCharacterKind.Backslash:
+                    return @"\\";
+            }
+
+            return string.Empty;
+        }
     }
 }

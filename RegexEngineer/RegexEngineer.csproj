@@ -42,7 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EscapedCharacterKind.cs" />
     <Compile Include="CollectionUtility.cs" />
+    <Compile Include="InvalidFragmentKindException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegexEngineer.cs" />
     <Compile Include="RegexFragment.cs" />

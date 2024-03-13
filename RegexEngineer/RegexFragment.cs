@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
+using RegexEngineerLib;
 
 namespace RegexEngineerLib
 {
@@ -15,6 +16,7 @@ namespace RegexEngineerLib
         internal string _basePattern = null;
 
         private RegexFragment _parent;
+        private List<string> _chars;
         private readonly List<RegexFragment> _contents;
         private readonly List<RegexFragment> _modifiers;
 
@@ -41,6 +43,7 @@ namespace RegexEngineerLib
         private RegexFragment()
         {
             _id = Guid.NewGuid();
+            _chars = new List<string>();
             _contents = new List<RegexFragment>();
             _modifiers = new List<RegexFragment>();
             _options = new RegexFragmentOptions();
@@ -57,12 +60,19 @@ namespace RegexEngineerLib
             }
         }
 
+        internal RegexFragment(IEnumerable<string> chars, bool negated) : this()
+        {
+            _chars.AddRange(chars);
+            _options.FragmentKind = negated ? RegexFragmentKind.NegatedCharacterSet : RegexFragmentKind.CharacterSet;
+        }
+
         #region Group Methods
 
         /// <summary>
-        /// 
+        /// Groups this fragment. Optionally adds additional fragments to the group.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="fragments">Additional fragments to add to the group.</param>
+        /// <returns>The group as a <see cref="RegexFragment"/>.</returns>
         public RegexFragment Group(params RegexFragment[] fragments)
         {
             List<RegexFragment> contents = fragments.Prepend(this).ToList();
@@ -81,9 +91,10 @@ namespace RegexEngineerLib
         }
 
         /// <summary>
-        /// 
+        /// Places this fragment in a capture group. Optionally adds additional fragments to the group.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="fragments">Additional fragments to add to the capture group.</param>
+        /// <returns>The group as a <see cref="RegexFragment"/>.</returns>
         public RegexFragment CaptureGroup(params RegexFragment[] fragments)
         {
             List<RegexFragment> contents = fragments.Prepend(this).ToList();
@@ -102,13 +113,16 @@ namespace RegexEngineerLib
         }
 
         /// <summary>
-        /// 
+        /// Places this fragment in a capture group. Optionally adds additional fragments to the group.
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public RegexFragment NamedCaptureGroup(string name)
+        /// <param name="name">The name of the capture group.</param>
+        /// <param name="fragments">Additional fragments to add to the capture group.</param>
+        /// <returns>The group as a <see cref="RegexFragment"/>.</returns>
+        public RegexFragment NamedCaptureGroup(string name, params RegexFragment[] fragments)
         {
-            var toReturn = new RegexFragment(this)
+            List<RegexFragment> contents = fragments.Prepend(this).ToList();
+
+            var toReturn = new RegexFragment(contents.ToArray())
             {
                 _options = new RegexFragmentOptions
                 {
@@ -117,19 +131,22 @@ namespace RegexEngineerLib
                 }
             };
 
-            _parent = toReturn;
+            contents.ForEach(f => f._parent = toReturn);
 
             return toReturn;
         }
 
         /// <summary>
-        /// 
+        /// Places this fragment in a lookaround group of the specified type. Optionally adds additional fragments to the group.
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public RegexFragment LookaroundGroup(LookaroundType type)
+        /// <param name="type">The type of lookaround group to create.</param>
+        /// <param name="fragments">Additional fragments to add to the lookaround group.</param>
+        /// <returns>The group as a <see cref="RegexFragment"/>.</returns>
+        public RegexFragment LookaroundGroup(LookaroundType type, params RegexFragment[] fragments)
         {
-            var toReturn = new RegexFragment(this)
+            List<RegexFragment> contents = fragments.Prepend(this).ToList();
+
+            var toReturn = new RegexFragment(contents.ToArray())
             {
                 _options = new RegexFragmentOptions
                 {
@@ -138,7 +155,8 @@ namespace RegexEngineerLib
                 }
             };
 
-            _parent = toReturn;
+            contents.ForEach(f => f._parent = toReturn);
+
             return toReturn;
         }
 
@@ -147,12 +165,17 @@ namespace RegexEngineerLib
         #region Modifier Methods
 
         /// <summary>
-        /// 
+        /// Adds a repetition modifier to this fragment.
         /// </summary>
-        /// <param name="count"></param>
+        /// <param name="count">The exact number of times to repeat.</param>
         /// <returns>This fragment with the added modifier.</returns>
         public RegexFragment Repeat(int count)
         {
+            if (count <= 0)
+            {
+                throw new ArgumentOutOfRangeException("The count must be greater than zero.");
+            }
+
             _modifiers.Add(new RegexFragment(count.ToString())
             {
                 _options =
@@ -166,13 +189,39 @@ namespace RegexEngineerLib
         }
 
         /// <summary>
-        /// 
+        /// Adds a repetition modifier to this fragment.
         /// </summary>
-        /// <param name="minimum"></param>
+        /// <param name="minimum">The least times to match the pattern.</param>
         /// <param name="maximum">The most times to match the pattern. 0 for unlimited times.</param>
         /// <returns>This fragment with the added modifier.</returns>
         public RegexFragment Repeat(int minimum, int maximum)
         {
+            if (minimum < 0 || maximum < 0)
+            {
+                throw new ArgumentOutOfRangeException("The minimum and maximum values must be non-negative.");
+            }
+            else if (minimum >= maximum)
+            {
+                throw new ArgumentOutOfRangeException("The minimum must be less than the maximum.");
+            }
+
+            // Check for simplified cases.
+            if (maximum == 0)
+            {
+                if (minimum == 0)
+                {
+                    return ZeroOrMore();
+                }
+                else if (minimum == 1)
+                {
+                    return OneOrMore();
+                }
+            }
+            else if (minimum == 0 && maximum == 1)
+            {
+                return Optional();
+            }
+
             _modifiers.Add(new RegexFragment(minimum.ToString() + ", " + (maximum > 0 ? maximum.ToString() : ""))
             {
                 _options =
@@ -187,7 +236,7 @@ namespace RegexEngineerLib
         }
 
         /// <summary>
-        /// 
+        /// Adds an optional modifier to this fragment.
         /// </summary>
         /// <returns>This fragment with the added modifier.</returns>
         public RegexFragment Optional()
@@ -204,9 +253,9 @@ namespace RegexEngineerLib
         }
 
         /// <summary>
-        /// 
+        /// Adds a modifier to this fragment that specifies to repeat the pattern one or more times.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>This fragment with the added modifier.</returns>
         public RegexFragment OneOrMore()
         {
             _modifiers.Add(new RegexFragment("+")
@@ -221,9 +270,9 @@ namespace RegexEngineerLib
         }
 
         /// <summary>
-        /// 
+        /// Adds a modifier to this fragment that specifies to repeat the pattern zero or more times.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>This fragment with the added modifier.</returns>
         public RegexFragment ZeroOrMore()
         {
             _modifiers.Add(new RegexFragment("*")
@@ -286,7 +335,20 @@ namespace RegexEngineerLib
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="charKind"></param>
         /// <returns></returns>
+        /// <exception cref="InvalidFragmentKindException"></exception>
+        public RegexFragment AddEscaped(EscapedCharacterKind charKind)
+        {
+            if (_options.FragmentKind != (RegexFragmentKind.CharacterSet | RegexFragmentKind.NegatedCharacterSet))
+            {
+                throw new InvalidFragmentKindException("This method can only be called on a character set fragment.");
+            }
+            _chars.Add(RegexEngineer.GetEscaped(charKind));
+
+            return this;
+        }
+
         internal string Compile()
         {
             switch (_options.FragmentKind)
