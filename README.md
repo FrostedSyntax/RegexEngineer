@@ -2,7 +2,7 @@
 
 ## About
 
-RegexBuilder is a C# library used to easily manage writing complicated Regex patterns with code. Each part of the pattern is represented by a RegexFragment object, which can each be modified and grouped according to the needs of the pattern you are writing.
+RegexEngineer is a C# library used to easily manage writing complicated Regex patterns with code. Each part of the pattern is represented by a RegexFragment object, which can each be modified and grouped according to the needs of the pattern you are writing.
 
 The methods are meant to be chainable to keep the code as short as possible but I wrote it to be flexible so there are several ways to use the library.
 
@@ -13,7 +13,7 @@ The methods are meant to be chainable to keep the code as short as possible but 
 ```
 string example =  @"[A-Za-z]+(?:['][a-z]+)?";
 
-RegexBuilder builder = RegexBuilder.Create();
+RegexEngineer builder = RegexEngineer.Create();
 
 var frag1 = builder.CreateCharClass("A-Za-z").OneOrMore();
 
