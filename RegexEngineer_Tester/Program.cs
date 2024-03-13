@@ -12,7 +12,14 @@ namespace RegexEngineerTester
     {
         static void Main(string[] args)
         {
-            RunAllTests();
+            var re = RegexEngineerLib.RegexEngineer.Create();
+            var frag = re.CreateLiteral("word").Group();
+
+            re.AddFragments(frag);
+
+            Console.WriteLine(re.ToString());
+
+            //RunAllTests();
 
             Console.ReadLine();
         }
@@ -43,34 +50,34 @@ namespace RegexEngineerTester
         [Test]
         private static bool Test1(string testString)
         {
-            var regexEngineer = RegexEngineer.Create();
+            var regexEngineer = RegexEngineerLib.RegexEngineer.Create();
 
             var fragments = new List<RegexFragment>
             {
-                regexEngineer.CreateCharClass("Hh").Combine(regexEngineer.CreateLiteral("ello")),
-                regexEngineer.CreateCharClass(" "),
-                regexEngineer.CreateCharClass("Ww").Combine(regexEngineer.CreateLiteral("orld"))
+                regexEngineer.CreateCharClass(false, "Hh").Combine(regexEngineer.CreateLiteral("ello")),
+                regexEngineer.CreateCharClass(false, " "),
+                regexEngineer.CreateCharClass(false, "Ww").Combine(regexEngineer.CreateLiteral("orld"))
             };
 
             regexEngineer.AddFragments(fragments.ToArray());
 
-            return new Regex(regexEngineer.ToString()).IsMatch(testString);
+            return regexEngineer.Test(testString);
         }
 
         // [0-9]+[ ]?
         [Test]
         private static bool Test2(string testString)
         {
-            var regexEngineer = RegexEngineer.Create();
+            var regexEngineer = RegexEngineerLib.RegexEngineer.Create();
 
             var fragments = new List<RegexFragment>
             {
-                regexEngineer.CreateCharClass("0-9").OneOrMore().Combine(regexEngineer.CreateCharClass(" ").Optional()),
+                regexEngineer.CreateEscapedChar(EscapedCharacterKind.Digit).OneOrMore().Combine(regexEngineer.CreateCharClass(false, " ").Optional()),
             };
 
             regexEngineer.AddFragments(fragments.ToArray());
 
-            return new Regex(regexEngineer.ToString()).Matches(testString).Count > 0;
+            return regexEngineer.GetMatches(testString).Count > 0;
         }
     }
 
