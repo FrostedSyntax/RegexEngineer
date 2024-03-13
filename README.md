@@ -1,18 +1,23 @@
 # RegexBuilder
 
+## About
+
+RegexBuilder is a C# library used to easily manage writing complicated Regex patterns with code. Each part of the pattern is represented by a RegexFragment object, which can each be modified and grouped according to the needs of the pattern you are writing.
+
 ## Example Usage
 
 > string example =  @"[A-Za-z]+(?:['][a-z]+)?";
 > 
-> RegexBuilder rb = RegexBuilder.Create();
-> var frag1 = rb.CreateCharClass("A-Za-z").OneOrMore();
-> var frag2 = rb.CreateCharClass('\'').Group(rb.CreateCharClass("a-z").OneOrMore()).Optional();
+> RegexBuilder builder = RegexBuilder.Create();
+> 
+> var frag1 = builder.CreateCharClass("A-Za-z").OneOrMore();
+> var frag2 = builder.CreateCharClass('\'').Group(builder.CreateCharClass("a-z").OneOrMore()).Optional();
 >
-> rb.AddFragments(frag1, frag2);
+> builder.AddFragments(frag1, frag2);
 >
-> Console.WriteLine(rb.ToString());
+> Console.WriteLine(rb.ToString() == example);
 >
-> // [A-Za-z]+(?:['][a-z]+)?
+> // True
 
 ## License
 
