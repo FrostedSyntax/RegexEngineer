@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexEngineer", "RegexEngineer\RegexEngineer.csproj", "{E6BEF064-4695-4A1F-9C9E-0D037FF50B20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexEngineer_Tester", "RegexEngineer_Tester\RegexEngineer_Tester.csproj", "{27778B54-CDD6-4509-A0C2-3C176DC64401}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{E6BEF064-4695-4A1F-9C9E-0D037FF50B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6BEF064-4695-4A1F-9C9E-0D037FF50B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6BEF064-4695-4A1F-9C9E-0D037FF50B20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27778B54-CDD6-4509-A0C2-3C176DC64401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27778B54-CDD6-4509-A0C2-3C176DC64401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27778B54-CDD6-4509-A0C2-3C176DC64401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27778B54-CDD6-4509-A0C2-3C176DC64401}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

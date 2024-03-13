@@ -1,4 +1,4 @@
-﻿namespace RegexEngineer
+﻿namespace RegexEngineerLib
 {
     /// <summary>
     /// 

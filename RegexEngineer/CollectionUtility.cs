@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace RegexEngineer
+namespace RegexEngineerLib
 {
     internal static class CollectionUtility
     {
@@ -19,6 +19,13 @@ namespace RegexEngineer
         /// <param name="toResolve">The object to make a string.</param>
         /// <returns>The string value of the specified object.</returns>
         public delegate string StringConverter(object toResolve);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        public static void Swap(ref char a, ref char b) => (b, a) = (a, b);
 
         /// <summary>
         /// 

@@ -3,42 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 
-namespace RegexEngineer
+namespace RegexEngineerLib
 {
     /// <summary>
-    /// 
+    /// An object representing a part of a regular expression pattern.
     /// </summary>
     public sealed class RegexFragment
     {
         internal Guid _id;
-
         internal RegexFragmentOptions _options;
-
         internal string _basePattern = null;
 
         private RegexFragment _parent;
-
         private readonly List<RegexFragment> _contents;
-
         private readonly List<RegexFragment> _modifiers;
 
         /// <summary>
-        /// 
+        /// The unique identifier for this fragment.
         /// </summary>
         public Guid Id => _id;
 
         /// <summary>
-        /// 
+        /// The containing fragment, if any.
         /// </summary>
         public RegexFragment Parent => _parent;
 
         /// <summary>
-        /// 
+        /// The contained fragments, if any.
         /// </summary>
         public IEnumerable<RegexFragment> Contents => _contents;
 
         /// <summary>
-        /// 
+        /// The modifiers for this fragment, if any.
         /// </summary>
         public IEnumerable<RegexFragment> Modifiers => _modifiers;
 
@@ -50,6 +46,8 @@ namespace RegexEngineer
             _options = new RegexFragmentOptions();
         }
 
+        private RegexFragment(params RegexFragment[] innerFragments) : this() => _contents.AddRange(innerFragments);
+
         internal RegexFragment(string literal) : this()
         {
             _options.FragmentKind = RegexFragmentKind.Literal;
@@ -58,8 +56,6 @@ namespace RegexEngineer
                 _basePattern = literal;
             }
         }
-
-        private RegexFragment(params RegexFragment[] innerFragments) : this() => _contents.AddRange(innerFragments);
 
         #region Group Methods
 
