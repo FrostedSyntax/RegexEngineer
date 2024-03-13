@@ -6,22 +6,23 @@ RegexBuilder is a C# library used to easily manage writing complicated Regex pat
 
 The methods are meant to be chainable to keep the code as short as possible but I wrote it to be flexible so there are several ways to use the library.
 
-This is a work in progress and I am interested in getting input from anyone who has ideas.
+> :wrench: This is a work in progress and I am interested in getting input from anyone who has ideas.
 
 ## Example Usage
 
-> string example =  @"[A-Za-z]+(?:['][a-z]+)?";
-> 
-> RegexBuilder builder = RegexBuilder.Create();
-> 
-> var frag1 = builder.CreateCharClass("A-Za-z").OneOrMore();
-> 
-> var frag2 = builder.CreateCharClass('\'').Group(builder.CreateCharClass("a-z").OneOrMore()).Optional();
->
-> builder.AddFragments(frag1, frag2);
->
-> Console.WriteLine(builder.ToString() == example);
->
+```
+string example =  @"[A-Za-z]+(?:['][a-z]+)?";
+
+RegexBuilder builder = RegexBuilder.Create();
+
+var frag1 = builder.CreateCharClass("A-Za-z").OneOrMore();
+
+var frag2 = builder.CreateCharClass('\'').Group(builder.CreateCharClass("a-z").OneOrMore()).Optional();
+
+builder.AddFragments(frag1, frag2);
+
+Console.WriteLine(builder.ToString() == example);
+```
 > // True
 
 ## License
