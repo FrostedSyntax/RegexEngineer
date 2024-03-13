@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 
-namespace RegexBuilder
+namespace RegexEngineer
 {
     /// <summary>
     /// 

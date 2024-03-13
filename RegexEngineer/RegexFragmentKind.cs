@@ -1,4 +1,4 @@
-﻿namespace RegexBuilder
+﻿namespace RegexEngineer
 {
     public enum RegexFragmentKind
     {

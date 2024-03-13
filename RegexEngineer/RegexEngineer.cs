@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace RegexBuilder
+namespace RegexEngineer
 {
-    // TODO: FINISH THIS THING
-
     /// <summary>
     /// 
     /// </summary>
-    public sealed class RegexBuilder
+    public sealed class RegexEngineer
     {
         private readonly List<RegexFragment> _fragments;
 
@@ -17,13 +15,13 @@ namespace RegexBuilder
         /// </summary>
         public List<RegexFragment> Fragments => _fragments;
 
-        private RegexBuilder() => _fragments = new List<RegexFragment>();
+        private RegexEngineer() => _fragments = new List<RegexFragment>();
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public static RegexBuilder Create() => new RegexBuilder();
+        public static RegexEngineer Create() => new RegexEngineer();
 
         /// <summary>
         /// 
