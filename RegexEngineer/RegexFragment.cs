@@ -366,7 +366,7 @@ namespace RegexEngineerLib
                 case RegexFragmentKind.ExactRepeatModifier:
                     return "{" + _options.RepeatCount + "}";
                 case RegexFragmentKind.RepeatRangeModifier:
-                    return "{" + _options.RepetitionMinimum + ", " + (_options.RepetitionMaximum > 0 ? _options.RepetitionMaximum.ToString() : "") + "}";
+                    return "{" + _options.RepetitionMinimum + "," + (_options.RepetitionMaximum > 0 ? _options.RepetitionMaximum.ToString() : "") + "}";
                 case RegexFragmentKind.Anchor:
                     switch (_options.Position)
                     {
