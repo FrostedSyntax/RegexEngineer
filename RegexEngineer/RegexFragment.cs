@@ -200,7 +200,7 @@ namespace RegexEngineerLib
             {
                 throw new ArgumentOutOfRangeException("The minimum and maximum values must be non-negative.");
             }
-            else if (minimum >= maximum)
+            else if (minimum >= maximum && maximum != 0)
             {
                 throw new ArgumentOutOfRangeException("The minimum must be less than the maximum.");
             }
@@ -360,9 +360,9 @@ namespace RegexEngineerLib
                 case RegexFragmentKind.NamedCaptureGroup:
                     return Wrap(CompileContents(), "(?<" + _options.GroupName + ">", ")") + CompileModifiers();
                 case RegexFragmentKind.CharacterSet:
-                    return Wrap(_basePattern, "[", "]") + CompileModifiers();
+                    return Wrap(_chars.Flatten(), "[", "]") + CompileModifiers();
                 case RegexFragmentKind.NegatedCharacterSet:
-                    return Wrap(_basePattern, "[^", "]") + CompileModifiers();
+                    return Wrap(_chars.Flatten(), "[^", "]") + CompileModifiers();
                 case RegexFragmentKind.ExactRepeatModifier:
                     return "{" + _options.RepeatCount + "}";
                 case RegexFragmentKind.RepeatRangeModifier:
