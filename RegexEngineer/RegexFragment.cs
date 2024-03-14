@@ -394,7 +394,7 @@ namespace RegexEngineerLib
                 case RegexFragmentKind.AlternationList:
                     return Wrap(_contents.Flatten(f => f.Compile(), "|"), "(?:", ")") + CompileModifiers();
                 case RegexFragmentKind.Combined:
-                    return _contents.Flatten(f => f.Compile());
+                    return _contents.Flatten(f => f.Compile()) + CompileModifiers();
                 case RegexFragmentKind.Operator:
                 case RegexFragmentKind.Literal:
                 case RegexFragmentKind.CharacterEscape:
