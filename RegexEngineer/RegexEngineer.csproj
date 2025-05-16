@@ -7,8 +7,8 @@
     <ProjectGuid>{E6BEF064-4695-4A1F-9C9E-0D037FF50B20}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RegexBuilder</RootNamespace>
-    <AssemblyName>RegexBuilder</AssemblyName>
+    <RootNamespace>RegexEngineer</RootNamespace>
+    <AssemblyName>RegexEngineer</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -29,7 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\RegexBuilder.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\RegexEngineer.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -45,6 +45,7 @@
     <Compile Include="EscapedCharacterKind.cs" />
     <Compile Include="CollectionUtility.cs" />
     <Compile Include="InvalidFragmentKindException.cs" />
+    <Compile Include="PatternUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegexEngineer.cs" />
     <Compile Include="RegexFragment.cs" />

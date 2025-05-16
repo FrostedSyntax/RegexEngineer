@@ -16,6 +16,11 @@ namespace RegexEngineerLib
         /// </summary>
         public List<RegexFragment> Fragments => _fragments;
 
+        /// <summary>
+        /// The full pattern as a string.
+        /// </summary>
+        public string CompiledPattern => Compile();
+
         private RegexEngineer() => _fragments = new List<RegexFragment>();
 
         /// <summary>
@@ -37,7 +42,7 @@ namespace RegexEngineerLib
         /// <returns>The newly created <see cref="RegexFragment"/>.</returns>
         public RegexFragment CreateLiteral(string literal)
         {
-            return new RegexFragment(literal)
+            return new RegexFragment(PatternUtilities.EscapeLiteral(literal))
             {
                 _options = {
                     FragmentKind = RegexFragmentKind.Literal

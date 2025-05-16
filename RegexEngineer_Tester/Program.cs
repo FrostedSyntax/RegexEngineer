@@ -12,10 +12,9 @@ namespace RegexEngineerTester
     {
         static void Main(string[] args)
         {
-            var re = RegexEngineerLib.RegexEngineer.Create();
-            var frag = re.CreateLiteral("word").Group();
+            var re = RegexEngineer.Create();
 
-            re.AddFragments(frag);
+            re.AddFragments(re.CreateLiteral("!?"));
 
             Console.WriteLine(re.ToString());
 
@@ -50,7 +49,7 @@ namespace RegexEngineerTester
         [Test]
         private static bool Test1(string testString)
         {
-            var regexEngineer = RegexEngineerLib.RegexEngineer.Create();
+            var regexEngineer = RegexEngineer.Create();
 
             var fragments = new List<RegexFragment>
             {
