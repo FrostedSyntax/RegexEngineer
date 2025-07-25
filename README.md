@@ -27,4 +27,4 @@ Console.WriteLine(builder.ToString() == example);
 
 ## License
 
-MonoGame.Extended is released under the [The MIT License (MIT)](https://github.com/craftworkgames/MonoGame.Extended/blob/master/LICENSE).
+RegexEngineer is released under the [The MIT License (MIT)](https://github.com/craftworkgames/MonoGame.Extended/blob/master/LICENSE).
