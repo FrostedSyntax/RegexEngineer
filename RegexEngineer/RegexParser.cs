@@ -6,19 +6,23 @@ using System.Threading.Tasks;
 
 namespace RegexEngineerLib
 {
-    public class RegexParser
+    /// <summary>
+    /// Parses regular expression patterns into a sequence of <see cref="PatternComponent"/> objects
+    /// representing syntactic elements.
+    /// </summary>
+    public static class RegexParser
     {
-        public class RegexComponent
+        /// <summary>
+        /// Parses the specified regular expression <paramref name="pattern"/> and returns the
+        /// list of components discovered in the pattern in sequential order.
+        /// </summary>
+        /// <param name="pattern">The regular expression pattern to parse.</param>
+        /// <returns>
+        /// A list of <see cref="PatternComponent"/> instances describing each element of the pattern.
+        /// </returns>
+        public static List<PatternComponent> Parse(string pattern)
         {
-            public string Type { get; set; }
-            public string Value { get; set; }
-            public string Description { get; set; }
-            public int Position { get; set; }
-        }
-
-        public List<RegexComponent> Parse(string pattern)
-        {
-            var components = new List<RegexComponent>();
+            var components = new List<PatternComponent>();
             int pos = 0;
 
             while (pos < pattern.Length)
@@ -28,7 +32,7 @@ namespace RegexEngineerLib
                 switch (c)
                 {
                     case '^':
-                        components.Add(new RegexComponent
+                        components.Add(new PatternComponent
                         {
                             Type = "Anchor",
                             Value = "^",
@@ -39,7 +43,7 @@ namespace RegexEngineerLib
                         break;
 
                     case '$':
-                        components.Add(new RegexComponent
+                        components.Add(new PatternComponent
                         {
                             Type = "Anchor",
                             Value = "$",
@@ -50,7 +54,7 @@ namespace RegexEngineerLib
                         break;
 
                     case '.':
-                        components.Add(new RegexComponent
+                        components.Add(new PatternComponent
                         {
                             Type = "Wildcard",
                             Value = ".",
@@ -81,7 +85,7 @@ namespace RegexEngineerLib
                     case '*':
                     case '+':
                     case '?':
-                        components.Add(new RegexComponent
+                        components.Add(new PatternComponent
                         {
                             Type = "Quantifier",
                             Value = c.ToString(),
@@ -98,7 +102,7 @@ namespace RegexEngineerLib
                         break;
 
                     case '|':
-                        components.Add(new RegexComponent
+                        components.Add(new PatternComponent
                         {
                             Type = "Alternation",
                             Value = "|",
@@ -109,7 +113,7 @@ namespace RegexEngineerLib
                         break;
 
                     default:
-                        components.Add(new RegexComponent
+                        components.Add(new PatternComponent
                         {
                             Type = "Literal",
                             Value = c.ToString(),
@@ -124,10 +128,10 @@ namespace RegexEngineerLib
             return components;
         }
 
-        private RegexComponent ParseEscapeSequence(string pattern, int start)
+        private static PatternComponent ParseEscapeSequence(string pattern, int start)
         {
             if (start + 1 >= pattern.Length)
-                return new RegexComponent { Type = "Literal", Value = "\\", Description = "Backslash", Position = start };
+                return new PatternComponent { Type = "Literal", Value = "\\", Description = "Backslash", Position = start };
 
             char next = pattern[start + 1];
             string value = "\\" + next;
@@ -147,7 +151,7 @@ namespace RegexEngineerLib
                 _ => $"Escaped character '{next}'"
             };
 
-            return new RegexComponent
+            return new PatternComponent
             {
                 Type = "Escape",
                 Value = value,
@@ -156,7 +160,7 @@ namespace RegexEngineerLib
             };
         }
 
-        private RegexComponent ParseCharacterClass(string pattern, int start)
+        private static PatternComponent ParseCharacterClass(string pattern, int start)
         {
             int end = pattern.IndexOf(']', start + 1);
             if (end == -1)
@@ -167,7 +171,7 @@ namespace RegexEngineerLib
             string desc = negated ? "Negated character class: NOT " : "Character class: ";
             desc += value.Substring(negated ? 2 : 1, value.Length - (negated ? 3 : 2));
 
-            return new RegexComponent
+            return new PatternComponent
             {
                 Type = "CharacterClass",
                 Value = value,
@@ -176,7 +180,7 @@ namespace RegexEngineerLib
             };
         }
 
-        private RegexComponent ParseGroup(string pattern, int start)
+        private static PatternComponent ParseGroup(string pattern, int start)
         {
             int depth = 1;
             int pos = start + 1;
@@ -215,7 +219,7 @@ namespace RegexEngineerLib
                 desc = "Non-capturing group";
             }
 
-            return new RegexComponent
+            return new PatternComponent
             {
                 Type = type,
                 Value = value,
@@ -224,16 +228,18 @@ namespace RegexEngineerLib
             };
         }
 
-        private RegexComponent ParseBracedQuantifier(string pattern, int start)
+        private static PatternComponent ParseBracedQuantifier(string pattern, int start)
         {
             int end = pattern.IndexOf('}', start);
             if (end == -1)
+            {
                 end = pattern.Length - 1;
+            }
 
             string value = pattern.Substring(start, end - start + 1);
             string desc = $"Quantifier: {value.Substring(1, value.Length - 2)} occurrences";
 
-            return new RegexComponent
+            return new PatternComponent
             {
                 Type = "Quantifier",
                 Value = value,
@@ -242,7 +248,7 @@ namespace RegexEngineerLib
             };
         }
 
-        private string GetQuantifierDescription(char q)
+        private static string GetQuantifierDescription(char q)
         {
             return q switch
             {
@@ -253,7 +259,11 @@ namespace RegexEngineerLib
             };
         }
 
-        public void PrintComponents(List<RegexComponent> components)
+        /// <summary>
+        /// Writes a formatted table of the given <paramref name="components"/> to the console.
+        /// </summary>
+        /// <param name="components">The list of <see cref="PatternComponent"/> instances to print.</param>
+        public static void PrintComponents(List<PatternComponent> components)
         {
             Console.WriteLine($"{"Position",-10}{"Type",-20}{"Value",-20}Description");
             Console.WriteLine(new string('-', 80));

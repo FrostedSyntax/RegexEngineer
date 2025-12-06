@@ -12,13 +12,9 @@ namespace RegexEngineerTester
     {
         static void Main(string[] args)
         {
-            var re = RegexEngineer.Create();
+            List<PatternComponent> components = RegexParser.Parse(@"\d+(\.\d+)?");
 
-            re.AddFragments(re.CreateLiteral("!?"));
-
-            Console.WriteLine(re.ToString());
-
-            //RunAllTests();
+            RegexParser.PrintComponents(components);
 
             Console.ReadLine();
         }
