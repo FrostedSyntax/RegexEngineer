@@ -12,9 +12,17 @@ namespace RegexEngineerTester
     {
         static void Main(string[] args)
         {
-            List<PatternComponent> components = RegexParser.Parse(@"\d+(\.\d+)?");
+            var re = RegexEngineer.Create();
 
-            RegexParser.PrintComponents(components);
+            var f = re.CreateEscapedChar(EscapedCharacterKind.Digit).Repeat(5);
+
+            var boundary = re.CreateEscapedChar(EscapedCharacterKind.WordBoundary);
+
+            f = boundary.Combine(f.Combine(boundary));
+
+            re.AddFragments(f);
+
+            Console.WriteLine(re.ToString());
 
             Console.ReadLine();
         }

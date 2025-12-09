@@ -39,7 +39,7 @@ namespace RegexEngineerLib
             if (list == null)
             { return null; }
 
-            return list.ToList().ConvertAll(item => item.ToString()).Flatten(separator);
+            return list.ToList().Flatten(item => item.ToString(), separator);
         }
 
         /// <summary>

@@ -285,6 +285,38 @@ namespace RegexEngineerLib
             return this;
         }
 
+        /// <summary>
+        /// Adds a start-of-string anchor to this fragment.
+        /// </summary>
+        /// <returns></returns>
+        public RegexFragment AtStart()
+        {
+            _modifiers.Prepend(new RegexFragment("^")
+            {
+                _options = {
+                    FragmentKind = RegexFragmentKind.Anchor,
+                    Position = AnchorPosition.Leading
+                }
+            });
+            return this;
+        }
+
+        /// <summary>
+        /// Adds an end-of-string anchor to this fragment.
+        /// </summary>
+        /// <returns></returns>
+        public RegexFragment AtEnd()
+        {
+            _modifiers.Add(new RegexFragment("$")
+            {
+                _options = {
+                    FragmentKind = RegexFragmentKind.Anchor,
+                    Position = AnchorPosition.Trailing
+                }
+            });
+            return this;
+        }
+
         #endregion
 
         /// <summary>
@@ -391,7 +423,11 @@ namespace RegexEngineerLib
                     }
                     break;
                 case RegexFragmentKind.AlternationList:
-                    return Wrap(_contents.Flatten(f => f.Compile(), "|"), "(?:", ")") + CompileModifiers();
+                    if (_modifiers.Count > 0)
+                    {
+                        return Wrap(_contents.Flatten(f => f.Compile(), "|"), "(?:", ")") + CompileModifiers();
+                    }
+                    return _contents.Flatten(f => f.Compile(), "|");
                 case RegexFragmentKind.Combined:
                     return _contents.Flatten(f => f.Compile()) + CompileModifiers();
                 case RegexFragmentKind.Operator:
